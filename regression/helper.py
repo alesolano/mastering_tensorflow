@@ -18,7 +18,7 @@ def get_batches(inputs, truth, batch_size):
     num_batches = inputs.shape[1]//batch_size
 
     batch_x = np.zeros([num_batches, 2, batch_size]) # batch_x[0] has to be the same shape than placeholder x
-    batch_y = np.zeros([num_batches, 1, batch_size]) # batch_y[0] has to be the same shape than placeholder 
+    batch_y = np.zeros([num_batches, 1, batch_size]) # batch_y[0] has to be the same shape than placeholder y
 
     for batch in range(num_batches):
         batch_x[batch][0] = inputs[0][batch*batch_size:batch*batch_size + batch_size]
