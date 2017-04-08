@@ -5,7 +5,7 @@ from helper import split_data, get_batches
 
 
 # MISSION:
-# Learn how to sum.
+# Learn how to sum two positive integers.
 
 
 ############ BUILDING THE GRAPH ############
@@ -15,8 +15,7 @@ batch_size = 100
 epochs = 5
 
 # Model
-x = tf.placeholder(tf.float32, [2, None]) 
-# TODO: declare 'x' and 'y' as tf.int32
+x = tf.placeholder(tf.float32, [2, None])
 
 W = tf.Variable(tf.truncated_normal([1, 2], stddev=0.05))
 b = tf.Variable(tf.random_normal([1]))
@@ -80,5 +79,13 @@ with tf.Session() as sess:
         x: np.array([[5], [7]])
         })
     print("The sum of 5 plus 7 is {}".format(final_test[0][0])) # The result will be near 12.
+
+    print("The weights are: {}".format(sess.run(W)))
+    print("and the bias is: {}".format(sess.run(b)))
+    # Obviously, to compute the sum, weights need to be [1, 1] and bias 0
+    # So, in this case, we should initialize bias with zeros:
+    # b = tf.Variable(tf.zeros([1]))
+    # Conclussion: we should understand what each layer is doing, so we could make things work efficiently
+    # (Maybe we should force each layer to behave like we want to)
 
 
