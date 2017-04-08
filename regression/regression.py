@@ -10,12 +10,12 @@ from helper import split_data, get_batches
 
 ############ BUILDING THE GRAPH ############
 # Hyperparameters
-learning_rate = 0.01
+learning_rate = 0.000009 # Terribly important hyperparameter. It can make your net go totally crazy.
 batch_size = 100
-epochs = 1
+epochs = 5
 
 # Model
-x = tf.placeholder(tf.float32, [2, None]) # Not very sure about this shape. Maybe [None, 2]?
+x = tf.placeholder(tf.float32, [2, None]) 
 # TODO: declare 'x' and 'y' as tf.int32
 
 W = tf.Variable(tf.truncated_normal([1, 2], stddev=0.05))
@@ -24,16 +24,15 @@ b = tf.Variable(tf.random_normal([1]))
 output = tf.add(tf.matmul(W, x), b)
 # We're in a regression problem. We don't need an activation function
 
-y = tf.placeholder(tf.float32, [1, None]) # Not very sure about this shape. Maybe [None]?
+y = tf.placeholder(tf.float32, [1, None]) 
 
 # Training
-# WE HAVE A TERRIBLE PROBLEM HERE. THE NN IS NOT LEARNING
-cost = tf.reduce_mean(tf.nn.l2_loss(y - output)) # NOTHING SURE ABOUT THIS
+cost = tf.reduce_sum(tf.square(output - y))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
 
-# Accuracy
-correct_pred = tf.equal(y, output)
-accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
+# Pseudo Accuracy
+# We can't measure accuracy very well in regression problems
+pseudo_acc = tf.reduce_sum(tf.square(output - y))
 
 
 ############ DATA ############
@@ -54,11 +53,12 @@ with tf.Session() as sess:
     # I don't know very well what epochs are
     for epoch in range(epochs):
         for batch in range(train_inputs.shape[1]//batch_size):
+
             sess.run(optimizer, feed_dict={
                 x: batch_x[batch],
                 y: batch_y[batch]
                 })
-            
+
             train_loss = sess.run(cost, feed_dict={
                 x: batch_x[batch],
                 y: batch_y[batch]
@@ -70,10 +70,15 @@ with tf.Session() as sess:
                     batch + 1,
                     train_loss))
     
-    test_acc = sess.run(accuracy, feed_dict={
+    test_loss = sess.run(pseudo_acc, feed_dict={
         x: test_inputs,
         y: np.array([test_truth]) # we need 'y' to have a shape of [1, None]
         })
-    print('Testing Accuracy: {}'.format(test_acc))
+    print('Testing Loss: {}'.format(test_loss))
+
+    final_test = sess.run(output, feed_dict={
+        x: np.array([[5], [7]])
+        })
+    print("The sum of 5 plus 7 is {}".format(final_test[0][0])) # The result will be near 12.
 
 
