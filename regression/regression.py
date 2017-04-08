@@ -29,9 +29,8 @@ y = tf.placeholder(tf.float32, [1, None])
 cost = tf.reduce_sum(tf.square(output - y))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
 
-# Pseudo Accuracy
-# We can't measure accuracy very well in regression problems
-pseudo_acc = tf.reduce_sum(tf.square(output - y))
+# Accuracy
+accuracy = tf.reduce_mean(y - tf.abs(output - y)) / tf.reduce_mean(y)
 
 
 ############ DATA ############
@@ -49,6 +48,7 @@ with tf.Session() as sess:
     train_inputs, test_inputs, train_truth, test_truth = split_data(inputs, ground_truth)
     batch_x, batch_y = get_batches(train_inputs, train_truth, batch_size)
 
+    # TRAINING
     # I don't know very well what epochs are
     for epoch in range(epochs):
         for batch in range(train_inputs.shape[1]//batch_size):
@@ -69,11 +69,13 @@ with tf.Session() as sess:
                     batch + 1,
                     train_loss))
     
-    test_loss = sess.run(pseudo_acc, feed_dict={
+
+    # TESTING
+    test_accuracy = sess.run(accuracy, feed_dict={
         x: test_inputs,
         y: np.array([test_truth]) # we need 'y' to have a shape of [1, None]
         })
-    print('Testing Loss: {}'.format(test_loss))
+    print('Testing Accuracy: {}'.format(test_accuracy))
 
     final_test = sess.run(output, feed_dict={
         x: np.array([[5], [7]])
@@ -87,5 +89,4 @@ with tf.Session() as sess:
     # b = tf.Variable(tf.zeros([1]))
     # Conclussion: we should understand what each layer is doing, so we could make things work efficiently
     # (Maybe we should force each layer to behave like we want to)
-
-
+    
