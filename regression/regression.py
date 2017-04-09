@@ -37,7 +37,7 @@ accuracy = tf.reduce_mean(y - tf.abs(output - y)) / tf.reduce_mean(y)
 input1 = np.random.randint(10, size=10000)
 input2 = np.random.randint(10, size=10000)
 inputs = np.array([input1, input2])
-ground_truth = input1 + input2
+targets = input1 + input2
 
 
 
@@ -45,8 +45,8 @@ ground_truth = input1 + input2
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
-    train_inputs, test_inputs, train_truth, test_truth = split_data(inputs, ground_truth)
-    batch_x, batch_y = get_batches(train_inputs, train_truth, batch_size)
+    train_inputs, test_inputs, train_targets, test_targets = split_data(inputs, targets)
+    batch_x, batch_y = get_batches(train_inputs, train_targets, batch_size)
 
     # TRAINING
     # I don't know very well what epochs are
@@ -73,7 +73,7 @@ with tf.Session() as sess:
     # TESTING
     test_accuracy = sess.run(accuracy, feed_dict={
         x: test_inputs,
-        y: np.array([test_truth]) # we need 'y' to have a shape of [1, None]
+        y: np.array([test_targets]) # we need 'y' to have a shape of [1, None]
         })
     print('Testing Accuracy: {}'.format(test_accuracy))
 
