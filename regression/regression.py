@@ -10,20 +10,20 @@ from helper import split_data, get_batches
 
 ############ BUILDING THE GRAPH ############
 # Hyperparameters
-learning_rate = 0.000009 # Terribly important hyperparameter. It can make your net go totally crazy.
+learning_rate = 0.00001 # Terribly important hyperparameter. It can make your net go totally crazy.
 batch_size = 100
 epochs = 5
 
 # Model
-x = tf.placeholder(tf.float32, [2, None])
+x = tf.placeholder(tf.float32, [None, 2])
 
-W = tf.Variable(tf.truncated_normal([1, 2], stddev=0.05))
+W = tf.Variable(tf.truncated_normal([2, 1], stddev=0.05))
 b = tf.Variable(tf.random_normal([1]))
 
-output = tf.add(tf.matmul(W, x), b)
+output = tf.add(tf.matmul(x, W), b)
 # We're in a regression problem. We don't need an activation function
 
-y = tf.placeholder(tf.float32, [1, None]) 
+y = tf.placeholder(tf.float32, [None, 1]) 
 
 # Training
 cost = tf.reduce_sum(tf.square(output - y))
@@ -34,10 +34,10 @@ accuracy = tf.reduce_mean(y - tf.abs(output - y)) / tf.reduce_mean(y)
 
 
 ############ DATA ############
-input1 = np.random.randint(10, size=10000)
-input2 = np.random.randint(10, size=10000)
-inputs = np.array([input1, input2])
-targets = input1 + input2
+input1 = np.random.randint(10, size=10000) # shape := [1, 10000]
+input2 = np.random.randint(10, size=10000) # shape := [1, 10000]
+inputs = np.stack((input1, input2), axis=-1) # shape := [10000, 2] -> same as placeholder 'x'
+targets = np.reshape(input1 + input2, [-1, 1]) # shape := [10000, 1] -> same as placeholder 'y'
 
 
 
@@ -51,7 +51,7 @@ with tf.Session() as sess:
     # TRAINING
     # I don't know very well what epochs are
     for epoch in range(epochs):
-        for batch in range(train_inputs.shape[1]//batch_size):
+        for batch in range(train_inputs.shape[0]//batch_size):
 
             sess.run(optimizer, feed_dict={
                 x: batch_x[batch],
@@ -73,12 +73,12 @@ with tf.Session() as sess:
     # TESTING
     test_accuracy = sess.run(accuracy, feed_dict={
         x: test_inputs,
-        y: np.array([test_targets]) # we need 'y' to have a shape of [1, None]
+        y: test_targets
         })
     print('Testing Accuracy: {}'.format(test_accuracy))
 
     final_test = sess.run(output, feed_dict={
-        x: np.array([[5], [7]])
+        x: np.array([[5, 7]])
         })
     print("The sum of 5 plus 7 is {}".format(final_test[0][0])) # The result will be near 12.
 
