@@ -1,9 +1,21 @@
 import numpy as np
 
 
-def split_data(inputs, targets):
+def get_data(max_int=10, size=10000):
+    input1 = np.random.randint(max_int, size=size) # shape := [1, 10000]
+    input2 = np.random.randint(max_int, size=size) # shape := [1, 10000]
+    inputs = np.stack((input1, input2), axis=-1) # shape := [10000, 2] -> same as placeholder 'x'
+    
+    targets = np.reshape(input1 + input2, [-1, 1]) # shape := [10000, 1] -> same as placeholder 'y'
+
+    return inputs, targets
+
+
+def split_data(inputs, targets, train_percentage=.75):
+    assert (0 <= train_percentage) and (train_percentage <= 1) # Train percentage must be within [0,1]
+
     size = inputs.shape[0]
-    train_size = int(np.ceil(size*.75))
+    train_size = int(np.ceil(size*train_percentage))
     test_size = size - train_size
 
     train_inputs = inputs[:train_size, :]

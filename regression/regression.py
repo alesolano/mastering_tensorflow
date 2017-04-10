@@ -1,20 +1,21 @@
 import tensorflow as tf
 import numpy as np
 
-from helper import split_data, get_batches
+from helper import get_data, split_data, get_batches
 
 
 # MISSION:
 # Learn how to sum two positive integers.
 
 
+
 ############ BUILDING THE GRAPH ############
-# Hyperparameters
+# HYPERPARAMETERS
 learning_rate = 0.00001 # Terribly important hyperparameter. It can make your net go totally crazy.
 batch_size = 100
-epochs = 5
+epochs = 4
 
-# Model
+# MODEL
 x = tf.placeholder(tf.float32, [None, 2])
 
 W = tf.Variable(tf.truncated_normal([2, 1], stddev=0.05))
@@ -25,19 +26,17 @@ output = tf.add(tf.matmul(x, W), b)
 
 y = tf.placeholder(tf.float32, [None, 1]) 
 
-# Training
+# TRAINING
 cost = tf.reduce_sum(tf.square(output - y))
 optimizer = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
 
-# Accuracy
+# ACCURACY
 accuracy = tf.reduce_mean(y - tf.abs(output - y)) / tf.reduce_mean(y)
 
 
+
 ############ DATA ############
-input1 = np.random.randint(10, size=10000) # shape := [1, 10000]
-input2 = np.random.randint(10, size=10000) # shape := [1, 10000]
-inputs = np.stack((input1, input2), axis=-1) # shape := [10000, 2] -> same as placeholder 'x'
-targets = np.reshape(input1 + input2, [-1, 1]) # shape := [10000, 1] -> same as placeholder 'y'
+inputs, targets = get_data(max_int=10, size=10000)
 
 
 
@@ -49,7 +48,6 @@ with tf.Session() as sess:
     batch_x, batch_y = get_batches(train_inputs, train_targets, batch_size)
 
     # TRAINING
-    # I don't know very well what epochs are
     for epoch in range(epochs):
         for batch in range(train_inputs.shape[0]//batch_size):
 
