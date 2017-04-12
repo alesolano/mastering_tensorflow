@@ -13,7 +13,7 @@ from helper import get_data, split_data, get_batches
 # HYPERPARAMETERS
 learning_rate = 0.00001 # Terribly important hyperparameter. It can make your net go totally crazy.
 batch_size = 100
-epochs = 4
+epochs = 2
 
 # MODEL
 x = tf.placeholder(tf.float32, [None, 2])
@@ -38,17 +38,20 @@ accuracy = tf.reduce_mean(y - tf.abs(output - y)) / tf.reduce_mean(y)
 ############ DATA ############
 inputs, targets = get_data(max_int=10, size=10000)
 
+# split train and test data
+train_inputs, test_inputs, train_targets, test_targets = split_data(inputs, targets)
+
 
 
 ############ SESSION ############
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
-    train_inputs, test_inputs, train_targets, test_targets = split_data(inputs, targets)
-    batch_x, batch_y = get_batches(train_inputs, train_targets, batch_size)
-
     # TRAINING
     for epoch in range(epochs):
+
+        batch_x, batch_y = get_batches(train_inputs, train_targets, batch_size)
+
         for batch in range(train_inputs.shape[0]//batch_size):
 
             sess.run(optimizer, feed_dict={

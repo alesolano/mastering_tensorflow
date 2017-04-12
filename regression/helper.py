@@ -14,7 +14,7 @@ def get_data(max_int=10, size=10000):
 def split_data(inputs, targets, train_percentage=.75):
     assert (0 <= train_percentage) and (train_percentage <= 1) # Train percentage must be within [0,1]
 
-    size = inputs.shape[0]
+    size = len(inputs) # length of the data
     train_size = int(np.ceil(size*train_percentage))
     test_size = size - train_size
 
@@ -29,7 +29,13 @@ def split_data(inputs, targets, train_percentage=.75):
 def get_batches(inputs, targets, batch_size):
     # TOIMPROVE: Now, if I can't fill the last batch with enough data, I'm droping it.
     # I'm not using all the information that I have
-    num_batches = inputs.shape[0]//batch_size
+    
+    # batches have to be picked randomly, so we need to shuffle the data
+    p = np.random.permutation(len(inputs))
+    inputs = inputs[p]
+    targets = targets[p]
+
+    num_batches = len(inputs)//batch_size
 
     batch_x = np.zeros([num_batches, batch_size, 2]) # batch_x[0] has to be the same shape than placeholder x
     batch_y = np.zeros([num_batches, batch_size, 1]) # batch_y[0] has to be the same shape than placeholder y
