@@ -2,8 +2,8 @@ import numpy as np
 
 
 def get_data(max_int=10, size=10000):
-    input1 = np.random.randint(max_int, size=size) # shape := [1, 10000]
-    input2 = np.random.randint(max_int, size=size) # shape := [1, 10000]
+    input1 = np.random.randint(max_int+1, size=size) # shape := [1, 10000]
+    input2 = np.random.randint(max_int+1, size=size) # shape := [1, 10000]
     inputs = np.stack((input1, input2), axis=-1) # shape := [10000, 2] -> same as placeholder 'x'
     
     targets = np.reshape(input1 + input2, [-1, 1]) # shape := [10000, 1] -> same as placeholder 'y'

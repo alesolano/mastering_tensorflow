@@ -60,7 +60,6 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
     # TRAINING
-    # I don't know very well what epochs are
     for epoch in range(epochs):
 
         batch_x, batch_y = get_batches(train_inputs, train_targets, batch_size)
