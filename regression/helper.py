@@ -12,7 +12,7 @@ def get_data(max_int=10, size=10000):
 
 
 def split_data(inputs, targets, train_percentage=.75):
-    assert (0 <= train_percentage) and (train_percentage <= 1) # Train percentage must be within [0,1]
+    assert (0 <= train_percentage) and (train_percentage <= 1), 'Train percentage must be within [0,1]'
 
     size = len(inputs) # length of the data
     train_size = int(np.ceil(size*train_percentage))
